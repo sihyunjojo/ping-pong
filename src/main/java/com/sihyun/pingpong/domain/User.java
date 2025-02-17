@@ -29,6 +29,9 @@ public class User extends BaseEntity {
     private UserStatus status; // WAIT(대기), ACTIVE(활성), NON_ACTIVE(비활성)
 
     public enum UserStatus {
-        WAIT, ACTIVE, NON_ACTIVE
+        ACTIVE,      // 활성 (fakerId ≤ 30)
+        WAIT,        // 대기 (31 ≤ fakerId ≤ 60)
+        NON_ACTIVE   // 비활성 (fakerId ≥ 61)
     }
+
 }
