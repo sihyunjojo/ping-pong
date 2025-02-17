@@ -1,6 +1,6 @@
 package com.sihyun.pingpong.controller;
 
-import com.sihyun.pingpong.dto.DefaultResponse;
+import com.sihyun.pingpong.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ public class HealthCheckController {
 
     @GetMapping
     @Operation(summary = "서버 상태 체크", description = "서버의 상태를 체크합니다.")
-    public ResponseEntity<DefaultResponse<String>> healthCheck() {
-        return ResponseEntity.ok(DefaultResponse.res(200, "API 요청이 성공했습니다."));
+    public ResponseEntity<ApiResponse<String>> healthCheck() {
+        return ResponseEntity.ok(ApiResponse.res(200, "API 요청이 성공했습니다."));
     }
 }
