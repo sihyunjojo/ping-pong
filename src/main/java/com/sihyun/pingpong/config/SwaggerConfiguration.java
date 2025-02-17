@@ -24,12 +24,6 @@ import org.springframework.context.annotation.Configuration;
         ),
         servers = {
                 @Server(url = "http://localhost:8080", description = "로컬 개발 서버")
-        },
-        tags = {
-                @Tag(name = "Health", description = "서버 상태 체크 API"),
-//                @Tag(name = "User", description = "유저 관련 API"),
-//                @Tag(name = "Room", description = "게임 방 관련 API"),
-//                @Tag(name = "Game", description = "게임 진행 관련 API")
         }
 )
 public class SwaggerConfiguration {
