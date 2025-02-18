@@ -12,9 +12,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+import com.sihyun.pingpong.domain.enums.RoomType;
+
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Room extends BaseEntity {
 
     @Id
@@ -37,11 +46,7 @@ public class Room extends BaseEntity {
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserRoom> userRooms; // 방에 속한 유저 리스트
-
-    public enum RoomType {
-        SINGLE, DOUBLE
-    }
-
+    
     public enum RoomStatus {
         WAIT, PROGRESS, FINISH
     }
