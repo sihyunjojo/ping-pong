@@ -1,8 +1,13 @@
 package com.sihyun.pingpong.dto;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter // Jackson이 JSON 변환 시, getter가 없는 필드를 직렬화하지 않음.
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL) // NON_NULL 옵션을 사용하면 JSON 변환 시 null 값을 가진 필드를 제외합니다.
 public class ApiResponse<T> {
     private Integer code;
     private String message;
