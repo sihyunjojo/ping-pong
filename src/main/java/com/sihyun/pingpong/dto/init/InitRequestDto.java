@@ -1,6 +1,8 @@
 package com.sihyun.pingpong.dto.init;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public record InitRequestDto(
-        Integer seed,
-        Integer quantity
+        @Schema(description = "Seed 값", defaultValue = "1") Integer seed,
+        @Schema(description = "생성할 유저 수", defaultValue = "10") Integer quantity
 ) {}
