@@ -175,12 +175,12 @@ public class RoomService {
             throw new IllegalStateException("게임이 진행 중이거나 이미 종료된 방에서는 나갈 수 없습니다.");
         }
 
-        // 4. 방을 나가는 로직
+        // 4. 만약 방장이 나가면 방에 있던 모든 사람들도 방에서 나가게 함
+    if (room.getHost().equals(user)) {
+        userRoomRepository.deleteByRoom(room);
+        room.setStatus(RoomStatus.FINISH);
+    } else {
         userRoomRepository.delete(userRoom);
-
-        // 5. 만약 방장이 나가면 방을 종료 상태(FINISH)로 변경
-        if (room.getHost().equals(user)) {
-            room.setStatus(RoomStatus.FINISH);
-        }
+    }
     }
 }
