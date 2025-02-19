@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error(ex.getMessage());
-        return ResponseEntity.status(201).body(ApiResponse.res(201, ex.getMessage()));
+        return ResponseEntity.status(201).body(ApiResponse.res(201, "불가능한 요청입니다.");
     }
 
     /**
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiResponse<Void>> handleIllegalStateException(IllegalStateException ex) {
         log.error(ex.getMessage());
-        return ResponseEntity.status(201).body(ApiResponse.res(201, ex.getMessage()));
+        return ResponseEntity.status(201).body(ApiResponse.res(201, "불가능한 요청입니다."));
     }
 
     /**
@@ -38,6 +38,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
         log.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.res(500, "서버 내부 오류가 발생했습니다."));
+                .body(ApiResponse.res(500, "에러가 발생했습니다."));
     }
 }
