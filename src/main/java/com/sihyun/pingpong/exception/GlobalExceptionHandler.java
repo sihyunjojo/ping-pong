@@ -14,22 +14,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     /**
-     * 잘못된 요청(유저가 존재하지 않음) 예외 처리
+     * RoomService, GameService에서 발생한 예외 처리 (201 응답)
      */
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        log.error(ex.getMessage());
+    @ExceptionHandler({RoomServiceException.class, GameServiceException.class})
+    public ResponseEntity<ApiResponse<Void>> handleServiceException(RuntimeException ex) {
+        log.error("[SERVICE ERROR] {}", ex.getMessage());
         return ResponseEntity.status(201).body(ApiResponse.res(201, "불가능한 요청입니다."));
     }
 
-    /**
-     * 비즈니스 로직 위반 (방을 생성할 수 없는 상태 등) 예외 처리
-     */
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ApiResponse<Void>> handleIllegalStateException(IllegalStateException ex) {
-        log.error(ex.getMessage());
-        return ResponseEntity.status(201).body(ApiResponse.res(201, "불가능한 요청입니다."));
-    }
 
     /**
      * 예상하지 못한 에러 처리 (500 에러)
