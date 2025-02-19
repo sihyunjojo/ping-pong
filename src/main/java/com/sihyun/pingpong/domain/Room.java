@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.sihyun.pingpong.domain.enums.RoomType;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

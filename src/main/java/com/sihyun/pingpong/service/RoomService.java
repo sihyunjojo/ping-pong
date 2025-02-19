@@ -8,6 +8,7 @@ import com.sihyun.pingpong.domain.enums.RoomType;
 import com.sihyun.pingpong.dto.room.RoomCreateRequestDto;
 import com.sihyun.pingpong.dto.room.RoomDetailResponseDto;
 import com.sihyun.pingpong.dto.room.RoomJoinRequestDto;
+import com.sihyun.pingpong.dto.room.RoomLeaveRequestDto;
 import com.sihyun.pingpong.dto.room.RoomListResponseDto;
 import com.sihyun.pingpong.dto.room.RoomResponseDto;
 import com.sihyun.pingpong.repository.RoomRepository;
@@ -144,6 +145,33 @@ public class RoomService {
             return UserRoom.Team.BLUE;
         } else {
             return UserRoom.Team.RED;
+        }
+    }
+
+
+    @Transactional
+    public void leaveRoom(Long roomId, RoomLeaveRequestDto request) {
+        // 1. 방 & 유저 존재 여부 확인
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        // 2. 유저가 방에 참가한 상태인지 확인
+        UserRoom userRoom = userRoomRepository.findByUserAndRoom(user, room)
+                .orElseThrow(() -> new IllegalStateException("유저가 해당 방에 참가하지 않았습니다."));
+
+        // 3. 이미 진행(PROGRESS) 또는 종료(FINISH) 상태인 방인지 확인
+        if (room.getStatus() == RoomStatus.PROGRESS || room.getStatus() == RoomStatus.FINISH) {
+            throw new IllegalStateException("게임이 진행 중이거나 이미 종료된 방에서는 나갈 수 없습니다.");
+        }
+
+        // 4. 방을 나가는 로직
+        userRoomRepository.delete(userRoom);
+
+        // 5. 만약 방장이 나가면 방을 종료 상태(FINISH)로 변경
+        if (room.getHost().equals(user)) {
+            room.setStatus(RoomStatus.FINISH);
         }
     }
 }

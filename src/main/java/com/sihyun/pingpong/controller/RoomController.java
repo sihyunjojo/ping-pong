@@ -4,6 +4,7 @@ import com.sihyun.pingpong.dto.ApiResponse;
 import com.sihyun.pingpong.dto.room.RoomCreateRequestDto;
 import com.sihyun.pingpong.dto.room.RoomDetailResponseDto;
 import com.sihyun.pingpong.dto.room.RoomJoinRequestDto;
+import com.sihyun.pingpong.dto.room.RoomLeaveRequestDto;
 import com.sihyun.pingpong.dto.room.RoomListResponseDto;
 import com.sihyun.pingpong.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,4 +59,14 @@ public class RoomController {
         return ResponseEntity.ok(ApiResponse.res(200, "API 요청이 성공했습니다."));
     }
     
+    @PostMapping("/out/{roomId}")
+    @Operation(summary = "방 나가기", description = "유저가 방에서 나갑니다.")
+    public ResponseEntity<ApiResponse<Void>> leaveRoom(
+        @Parameter(description = "방 ID", example = "1")
+        @PathVariable("roomId") Long roomId,
+        @RequestBody RoomLeaveRequestDto request
+    ) {
+        roomService.leaveRoom(roomId, request);
+        return ResponseEntity.ok(ApiResponse.res(200, "API 요청이 성공했습니다."));
+    }
 }
