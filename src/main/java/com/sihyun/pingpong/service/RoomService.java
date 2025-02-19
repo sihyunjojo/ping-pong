@@ -2,12 +2,21 @@ package com.sihyun.pingpong.service;
 
 import com.sihyun.pingpong.domain.Room;
 import com.sihyun.pingpong.domain.User;
+import com.sihyun.pingpong.domain.enums.RoomStatus;
 import com.sihyun.pingpong.domain.enums.RoomType;
 import com.sihyun.pingpong.dto.room.RoomCreateRequestDto;
+import com.sihyun.pingpong.dto.room.RoomListResponseDto;
+import com.sihyun.pingpong.dto.room.RoomResponseDto;
 import com.sihyun.pingpong.repository.RoomRepository;
 import com.sihyun.pingpong.repository.UserRepository;
 import com.sihyun.pingpong.repository.UserRoomRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +49,23 @@ public class RoomService {
                 .title(request.title())
                 .roomType(request.roomType() != null ? request.roomType() : RoomType.SINGLE) // ✅ 기본값 설정
                 .host(user)
-                .status(Room.RoomStatus.WAIT) // WAIT 상태로 생성
+                .status(RoomStatus.WAIT) // WAIT 상태로 생성
                 .build();
 
         roomRepository.save(room);
+    }
+
+    @Transactional(readOnly = true)
+    public RoomListResponseDto getAllRoomsWithPaging(int page, int size) {
+        Page<Room> roomPage = roomRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")));
+        List<RoomResponseDto> roomList = roomPage.getContent().stream()
+                .map(RoomResponseDto::fromEntity)
+                .toList();
+
+        return new RoomListResponseDto(
+                roomPage.getTotalElements(),
+                roomPage.getTotalPages(),
+                roomList
+        );
     }
 }
