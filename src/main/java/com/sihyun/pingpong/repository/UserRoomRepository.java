@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
         boolean existsByUser(User user);
         long countByRoomAndTeam(Room room, UserRoom.Team team);
+        long countByRoom(Room room);
 }

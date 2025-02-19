@@ -3,12 +3,11 @@ package com.sihyun.pingpong.controller;
 import com.sihyun.pingpong.dto.ApiResponse;
 import com.sihyun.pingpong.dto.room.RoomCreateRequestDto;
 import com.sihyun.pingpong.dto.room.RoomDetailResponseDto;
+import com.sihyun.pingpong.dto.room.RoomJoinRequestDto;
 import com.sihyun.pingpong.dto.room.RoomListResponseDto;
 import com.sihyun.pingpong.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +46,16 @@ public class RoomController {
     ) {
         RoomDetailResponseDto roomDetail = roomService.getRoomDetail(roomId);
         return ResponseEntity.ok(ApiResponse.res(200, "API 요청이 성공했습니다.", roomDetail));
+    }
+
+    @PostMapping("/attention/{roomId}")
+    @Operation(summary = "방 참가", description = "유저가 방에 참가합니다.")
+    public ResponseEntity<ApiResponse<Void>> joinRoom(
+        @Parameter(description = "참가할 방의 ID", required = true, example = "1")
+        @PathVariable("roomId") Long roomId, 
+        @RequestBody RoomJoinRequestDto request) {
+        roomService.joinRoom(roomId, request);
+        return ResponseEntity.ok(ApiResponse.res(200, "API 요청이 성공했습니다."));
     }
     
 }

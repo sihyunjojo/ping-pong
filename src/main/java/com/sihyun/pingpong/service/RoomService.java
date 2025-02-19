@@ -7,6 +7,7 @@ import com.sihyun.pingpong.domain.enums.RoomStatus;
 import com.sihyun.pingpong.domain.enums.RoomType;
 import com.sihyun.pingpong.dto.room.RoomCreateRequestDto;
 import com.sihyun.pingpong.dto.room.RoomDetailResponseDto;
+import com.sihyun.pingpong.dto.room.RoomJoinRequestDto;
 import com.sihyun.pingpong.dto.room.RoomListResponseDto;
 import com.sihyun.pingpong.dto.room.RoomResponseDto;
 import com.sihyun.pingpong.repository.RoomRepository;
@@ -76,7 +77,7 @@ public class RoomService {
         );
     }
 
-     @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public RoomDetailResponseDto getRoomDetail(Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 방입니다."));
@@ -90,5 +91,59 @@ public class RoomService {
                 room.getCreatedAt().format(FORMATTER),
                 room.getUpdatedAt().format(FORMATTER)
         );
+    }
+
+    @Transactional
+    public void joinRoom(Long roomId, RoomJoinRequestDto request) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 방입니다."));
+
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+
+        // 방 상태 확인
+        if (room.getStatus() != RoomStatus.WAIT) {
+            throw new IllegalStateException("대기 상태인 방만 참가할 수 있습니다.");
+        }
+
+        // 유저 상태 확인
+        if (user.getStatus() != User.UserStatus.ACTIVE) {
+            throw new IllegalStateException("활성 상태인 유저만 참가할 수 있습니다.");
+        }
+
+        // 유저가 이미 다른 방에 참여 중인지 확인
+        if (userRoomRepository.existsByUser(user)) {
+            throw new IllegalStateException("유저는 이미 다른 방에 참가 중입니다.");
+        }
+
+        // 방 정원 확인
+        long currentMemberCount = userRoomRepository.countByRoom(room);
+        long maxCapacity = room.getRoomType() == RoomType.SINGLE ? 2 : 4;
+        if (currentMemberCount >= maxCapacity) {
+            throw new IllegalStateException("방이 가득 차 있어 참가할 수 없습니다.");
+        }
+
+        // 팀 배정 로직
+        UserRoom.Team team = assignTeam(room);
+
+        // 유저를 방에 추가
+        userRoomRepository.save(
+            UserRoom.builder()
+                .user(user)
+                .room(room)
+                .team(team)
+                .build()
+        );
+    }
+
+    private UserRoom.Team assignTeam(Room room) {
+        long redCount = userRoomRepository.countByRoomAndTeam(room, UserRoom.Team.RED);
+        long blueCount = userRoomRepository.countByRoomAndTeam(room, UserRoom.Team.BLUE);
+
+        if (redCount > blueCount) {
+            return UserRoom.Team.BLUE;
+        } else {
+            return UserRoom.Team.RED;
+        }
     }
 }
