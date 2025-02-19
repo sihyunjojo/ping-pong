@@ -15,19 +15,16 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
-    hikari:
-      minimum-idle: 5
-      maximum-pool-size: 20
-      auto-commit: true
-      idle-timeout: 30000
-      pool-name: HikariCP
-      max-lifetime: 1800000
-      connection-timeout: 30000
 
   jpa:
     hibernate:
       ddl-auto: create
     open-in-view: false
+    database-platform: org.hibernate.dialect.H2Dialect
 
 server:
   port: 8080
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
