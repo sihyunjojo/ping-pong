@@ -34,9 +34,7 @@ public class InitService {
     @Transactional
     public void initializeDatabase(InitRequestDto request) {
         // 1. 모든 데이터 삭제
-        userRepository.deleteAll();
-        roomRepository.deleteAll();
-        userRoomRepository.deleteAll();
+        cleanup();
 
           // 2. Faker API 호출
         String url = String.format(FAKER_API_URL, request.seed(), request.quantity());
@@ -74,5 +72,11 @@ public class InitService {
         if (fakerId <= 30) return UserStatus.ACTIVE;
         if (fakerId <= 60) return UserStatus.WAIT;
         return UserStatus.NON_ACTIVE;
+    }
+
+    public void cleanup() {
+        userRepository.deleteAll();
+        roomRepository.deleteAll();
+        userRoomRepository.deleteAll();
     }
 }
