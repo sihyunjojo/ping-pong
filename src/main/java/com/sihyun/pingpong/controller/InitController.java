@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/init")
-@Tag(name = "Init", description = "데이터 초기화 API")
+@Tag(name = "1. Init", description = "데이터 초기화 API")
 @RequiredArgsConstructor
 public class InitController {
 
