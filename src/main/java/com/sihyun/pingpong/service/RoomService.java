@@ -2,16 +2,21 @@ package com.sihyun.pingpong.service;
 
 import com.sihyun.pingpong.domain.Room;
 import com.sihyun.pingpong.domain.User;
+import com.sihyun.pingpong.domain.UserRoom;
 import com.sihyun.pingpong.domain.enums.RoomStatus;
 import com.sihyun.pingpong.domain.enums.RoomType;
 import com.sihyun.pingpong.dto.room.RoomCreateRequestDto;
+import com.sihyun.pingpong.dto.room.RoomDetailResponseDto;
 import com.sihyun.pingpong.dto.room.RoomListResponseDto;
 import com.sihyun.pingpong.dto.room.RoomResponseDto;
 import com.sihyun.pingpong.repository.RoomRepository;
 import com.sihyun.pingpong.repository.UserRepository;
 import com.sihyun.pingpong.repository.UserRoomRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -27,6 +32,8 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final UserRoomRepository userRoomRepository;
+
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Transactional
     public void createRoom(RoomCreateRequestDto request) {
@@ -66,6 +73,22 @@ public class RoomService {
                 roomPage.getTotalElements(),
                 roomPage.getTotalPages(),
                 roomList
+        );
+    }
+
+     @Transactional(readOnly = true)
+    public RoomDetailResponseDto getRoomDetail(Long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 방입니다."));
+
+        return new RoomDetailResponseDto(
+                room.getId(),
+                room.getTitle(),
+                room.getHost().getId(),
+                room.getRoomType().name(),
+                room.getStatus().name(),
+                room.getCreatedAt().format(FORMATTER),
+                room.getUpdatedAt().format(FORMATTER)
         );
     }
 }
