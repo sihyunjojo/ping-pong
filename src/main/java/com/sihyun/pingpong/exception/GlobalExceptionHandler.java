@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error(ex.getMessage());
-        return ResponseEntity.status(201).body(ApiResponse.res(201, "불가능한 요청입니다.");
+        return ResponseEntity.status(201).body(ApiResponse.res(201, "불가능한 요청입니다."));
     }
 
     /**
