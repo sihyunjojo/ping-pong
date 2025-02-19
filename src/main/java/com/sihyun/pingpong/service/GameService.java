@@ -7,18 +7,25 @@ import com.sihyun.pingpong.dto.game.GameStartRequestDto;
 import com.sihyun.pingpong.exception.GameServiceException;
 import com.sihyun.pingpong.repository.RoomRepository;
 import com.sihyun.pingpong.repository.UserRepository;
+import com.sihyun.pingpong.repository.UserRoomRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.concurrent.CompletableFuture;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GameService {
 
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final UserRoomRepository userRoomRepository;
 
     @Transactional
     public void startGame(Long roomId, GameStartRequestDto request) {
@@ -56,12 +63,25 @@ public class GameService {
     private void scheduleGameEnd(Room room) {
         CompletableFuture.runAsync(() -> {
             try {
-                Thread.sleep(60_000); // 1분 대기
-                room.setStatus(RoomStatus.FINISH);
-                roomRepository.save(room);
+                Thread.sleep(60_000);
+                endGame(room.getId());
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         });
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void endGame(Long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new GameServiceException("존재하지 않는 방입니다."));
+        
+        room.setStatus(RoomStatus.FINISH);
+        roomRepository.save(room);
+        userRoomRepository.deleteByRoom(room);
+    }
 }
+
+// ❓ @TransactionalEventListener 대신 그냥 @Transactional을 사용하면 안 될까?
+// 🚀 결론: 비동기(@Async)로 실행되는 경우, 기존 @Transactional이 제대로 동작하지 않을 수 있음!
+// 비동기 환경에서는 기존 트랜잭션과 별도의 트랜잭션이 생성되기 때문.
