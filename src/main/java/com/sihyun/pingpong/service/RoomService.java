@@ -62,6 +62,15 @@ public class RoomService {
                 .build();
 
         roomRepository.save(room);
+        
+        // 5. 방 생성한 사람을 자동으로 참가시키기
+        userRoomRepository.save(
+            UserRoom.builder()
+                .user(user)
+                .room(room)
+                .team(assignTeam(room)) // 팀 배정 로직 추가
+                .build()
+        );
     }
 
     @Transactional(readOnly = true)
