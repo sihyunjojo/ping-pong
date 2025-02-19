@@ -12,11 +12,11 @@ import com.sihyun.pingpong.dto.room.RoomLeaveRequestDto;
 import com.sihyun.pingpong.dto.room.RoomListResponseDto;
 import com.sihyun.pingpong.dto.room.RoomResponseDto;
 import com.sihyun.pingpong.dto.room.TeamChangeRequestDto;
+import com.sihyun.pingpong.exception.RoomServiceException;
 import com.sihyun.pingpong.repository.RoomRepository;
 import com.sihyun.pingpong.repository.UserRepository;
 import com.sihyun.pingpong.repository.UserRoomRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
@@ -42,16 +42,16 @@ public class RoomService {
     public void createRoom(RoomCreateRequestDto request) {
         // 1. 유저가 존재하는지 확인
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RoomServiceException("유저를 찾을 수 없습니다."));
 
         // 2. 유저 상태 확인 (ACTIVE 상태인지)
         if (user.getStatus() != User.UserStatus.ACTIVE) {
-            throw new IllegalStateException("방을 생성할 수 없는 유저 상태입니다.");
+            throw new RoomServiceException("방을 생성할 수 없는 유저 상태입니다.");
         }
 
         // 3. 유저가 이미 참여한 방이 있는지 확인
         if (userRoomRepository.existsByUser(user)) {
-            throw new IllegalStateException("이미 참여한 방이 있습니다.");
+            throw new RoomServiceException("이미 참여한 방이 있습니다.");
         }
 
         // 4. 방 생성 및 저장
@@ -91,7 +91,7 @@ public class RoomService {
     @Transactional(readOnly = true)
     public RoomDetailResponseDto getRoomDetail(Long roomId) {
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 방입니다."));
+                .orElseThrow(() -> new RoomServiceException("존재하지 않는 방입니다."));
 
         return new RoomDetailResponseDto(
                 room.getId(),
@@ -107,31 +107,31 @@ public class RoomService {
     @Transactional
     public void joinRoom(Long roomId, RoomJoinRequestDto request) {
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 방입니다."));
+                .orElseThrow(() -> new RoomServiceException("존재하지 않는 방입니다."));
 
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new RoomServiceException("존재하지 않는 유저입니다."));
 
         // 방 상태 확인
         if (room.getStatus() != RoomStatus.WAIT) {
-            throw new IllegalStateException("대기 상태인 방만 참가할 수 있습니다.");
+            throw new RoomServiceException("대기 상태인 방만 참가할 수 있습니다.");
         }
 
         // 유저 상태 확인
         if (user.getStatus() != User.UserStatus.ACTIVE) {
-            throw new IllegalStateException("활성 상태인 유저만 참가할 수 있습니다.");
+            throw new RoomServiceException("활성 상태인 유저만 참가할 수 있습니다.");
         }
 
         // 유저가 이미 다른 방에 참여 중인지 확인
         if (userRoomRepository.existsByUser(user)) {
-            throw new IllegalStateException("유저는 이미 다른 방에 참가 중입니다.");
+            throw new RoomServiceException("유저는 이미 다른 방에 참가 중입니다.");
         }
 
         // 방 정원 확인
         long currentMemberCount = userRoomRepository.countByRoom(room);
         long maxCapacity = room.getRoomType() == RoomType.SINGLE ? 2 : 4;
         if (currentMemberCount >= maxCapacity) {
-            throw new IllegalStateException("방이 가득 차 있어 참가할 수 없습니다.");
+            throw new RoomServiceException("방이 가득 차 있어 참가할 수 없습니다.");
         }
 
         // 팀 배정 로직
@@ -163,17 +163,17 @@ public class RoomService {
     public void leaveRoom(Long roomId, RoomLeaveRequestDto request) {
         // 1. 방 & 유저 존재 여부 확인
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+                .orElseThrow(() -> new RoomServiceException("존재하지 않는 방입니다."));
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new RoomServiceException("존재하지 않는 유저입니다."));
 
         // 2. 유저가 방에 참가한 상태인지 확인
         UserRoom userRoom = userRoomRepository.findByUserAndRoom(user, room)
-                .orElseThrow(() -> new IllegalStateException("유저가 해당 방에 참가하지 않았습니다."));
+                .orElseThrow(() -> new RoomServiceException("유저가 해당 방에 참가하지 않았습니다."));
 
         // 3. 이미 진행(PROGRESS) 또는 종료(FINISH) 상태인 방인지 확인
         if (room.getStatus() == RoomStatus.PROGRESS || room.getStatus() == RoomStatus.FINISH) {
-            throw new IllegalStateException("게임이 진행 중이거나 이미 종료된 방에서는 나갈 수 없습니다.");
+            throw new RoomServiceException("게임이 진행 중이거나 이미 종료된 방에서는 나갈 수 없습니다.");
         }
 
         // 4. 만약 방장이 나가면 방에 있던 모든 사람들도 방에서 나가게 함
@@ -190,18 +190,18 @@ public class RoomService {
     public void changeTeam(Long roomId, TeamChangeRequestDto request) {
         // 1. 방 및 유저 조회
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 방입니다."));
+                .orElseThrow(() -> new RoomServiceException("존재하지 않는 방입니다."));
 
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new RoomServiceException("존재하지 않는 유저입니다."));
 
         // 2. 유저가 해당 방에 참가하고 있는지 확인
         UserRoom userRoom = userRoomRepository.findByUserAndRoom(user, room)
-                .orElseThrow(() -> new IllegalStateException("유저가 해당 방에 참가하지 않았습니다."));
+                .orElseThrow(() -> new RoomServiceException("유저가 해당 방에 참가하지 않았습니다."));
 
         // 3. 방의 상태 확인 (대기 상태인지)
         if (room.getStatus() != RoomStatus.WAIT) {
-            throw new IllegalStateException("대기 상태에서만 팀을 변경할 수 있습니다.");
+            throw new RoomServiceException("대기 상태에서만 팀을 변경할 수 있습니다.");
         }
 
         // 4. 현재 팀과 반대 팀 구하기
@@ -213,7 +213,7 @@ public class RoomService {
         long maxTeamSize = room.getRoomType().getMaxPlayers() / 2; // 단식: 1명, 복식: 2명
 
         if (teamSize >= maxTeamSize) {
-            throw new IllegalStateException("상대 팀이 정원의 절반만큼 찼기 때문에 변경할 수 없습니다.");
+            throw new RoomServiceException("상대 팀이 정원의 절반만큼 찼기 때문에 변경할 수 없습니다.");
         }
 
         // 6. 팀 변경 적용
