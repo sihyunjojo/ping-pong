@@ -49,7 +49,7 @@ public class Room extends BaseEntity {
     @Column(nullable = false)
     private RoomStatus status; // WAIT(대기), PROGRESS(진행중), FINISH(완료)
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserRoom> userRooms; // 방에 속한 유저 리스트
 }
 
