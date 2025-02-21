@@ -28,8 +28,8 @@ public class InitService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // private static final String FAKER_API_URL = "https://fakerapi.it/api/v1/users?_seed=%d&_quantity=%d&_locale=ko_KR";
-    private static final String FAKER_API_URL = "http://localhost:8080/fake-api/users?_seed=%d&_quantity=%d&_locale=ko_KR";
+    private static final String FAKER_API_URL = "https://fakerapi.it/api/v1/users?_seed=%d&_quantity=%d&_locale=ko_KR";
+    // private static final String FAKER_API_URL = "http://localhost:8080/fake-api/users?_seed=%d&_quantity=%d&_locale=ko_KR";
 
     @Transactional
     public void initializeDatabase(InitRequestDto request) {
@@ -41,7 +41,7 @@ public class InitService {
 
         // ---- HTTP 헤더 추가 ----
         HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON)); // JSON 응답을 기대
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON)); // JSON 응답을 기대`
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<Map> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
