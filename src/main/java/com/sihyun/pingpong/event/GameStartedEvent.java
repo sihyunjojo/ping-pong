@@ -1,4 +1,4 @@
-package com.sihyun.pingpong.service;
+package com.sihyun.pingpong.event;
 
 import lombok.Getter;
 
