@@ -14,6 +14,8 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class GameService {
 
     @Transactional
     public void startGame(Long roomId, GameStartRequestDto request) {
+        log.debug(roomId + "방 게임 시작" + LocalDateTime.now());
         // 1. 방 & 유저 존재 여부 확인
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new GameServiceException("존재하지 않는 방입니다."));
@@ -80,7 +83,7 @@ public class GameService {
             log.error(e.getMessage());
             Thread.currentThread().interrupt();
         } finally {
-            log.info("1분 지남");
+            log.debug("1분 지남");
         }
     }
     

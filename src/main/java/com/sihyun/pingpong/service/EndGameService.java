@@ -1,5 +1,7 @@
 package com.sihyun.pingpong.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,7 @@ public class EndGameService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void endGameTransactional(Long roomId) {
-        log.info("메서드 시작");
+        log.debug(roomId + "방 게임 끝" + LocalDateTime.now());
 
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new GameServiceException("존재하지 않는 방입니다."));
