@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/game")
+@RequestMapping("/room")
 @Tag(name = "4. Game", description = "게임 진행 관련 API")
 public class GameController {
 
