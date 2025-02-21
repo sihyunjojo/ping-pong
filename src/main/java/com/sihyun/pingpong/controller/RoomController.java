@@ -6,7 +6,6 @@ import com.sihyun.pingpong.dto.room.RoomDetailResponseDto;
 import com.sihyun.pingpong.dto.room.RoomJoinRequestDto;
 import com.sihyun.pingpong.dto.room.RoomLeaveRequestDto;
 import com.sihyun.pingpong.dto.room.RoomListResponseDto;
-import com.sihyun.pingpong.dto.room.TeamChangeRequestDto;
 import com.sihyun.pingpong.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -71,14 +70,5 @@ public class RoomController {
         return ResponseEntity.ok(ApiResponse.res(200, "API 요청이 성공했습니다."));
     }
 
-    @PutMapping("/{roomId}")
-    @Operation(summary = "팀 변경", description = "유저가 현재 참가 중인 방에서 팀을 변경합니다.")
-    public ResponseEntity<ApiResponse<Void>> changeTeam(
-        @Parameter(description = "팀을 변경할 방의 ID", required = true, example = "1")
-        @PathVariable("roomId") Long roomId,
-        @RequestBody TeamChangeRequestDto request
-    ) {
-        roomService.changeTeam(roomId, request);
-        return ResponseEntity.ok(ApiResponse.res(200, "API 요청이 성공했습니다."));
-    }
+
 }
