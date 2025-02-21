@@ -1,5 +1,6 @@
 package com.sihyun.pingpong.service;
 
+import com.sihyun.pingpong.dto.team.TeamChangeRequestDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,7 +9,6 @@ import com.sihyun.pingpong.domain.User;
 import com.sihyun.pingpong.domain.UserRoom;
 import com.sihyun.pingpong.domain.enums.RoomStatus;
 import com.sihyun.pingpong.domain.enums.Team;
-import com.sihyun.pingpong.dto.room.TeamChangeRequestDto;
 import com.sihyun.pingpong.exception.RoomServiceException;
 import com.sihyun.pingpong.repository.RoomRepository;
 import com.sihyun.pingpong.repository.UserRepository;

@@ -1,18 +1,19 @@
 package com.sihyun.pingpong.controller;
 
+import com.sihyun.pingpong.dto.team.TeamChangeRequestDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sihyun.pingpong.dto.ApiResponse;
-import com.sihyun.pingpong.dto.room.TeamChangeRequestDto;
 import com.sihyun.pingpong.service.TeamService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +31,7 @@ public class TeamController {
     public ResponseEntity<ApiResponse<Void>> changeTeam(
         @Parameter(description = "팀을 변경할 방의 ID", required = true, example = "1")
         @PathVariable("roomId") Long roomId,
-        @RequestBody TeamChangeRequestDto request
+        @Valid @RequestBody TeamChangeRequestDto request
     ) {
         teamService.changeTeam(roomId, request);
         return ResponseEntity.ok(ApiResponse.res(200, "API 요청이 성공했습니다."));

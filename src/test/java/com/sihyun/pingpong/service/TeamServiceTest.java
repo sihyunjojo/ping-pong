@@ -11,7 +11,7 @@ import com.sihyun.pingpong.domain.UserRoom;
 import com.sihyun.pingpong.domain.enums.RoomStatus;
 import com.sihyun.pingpong.domain.enums.RoomType;
 import com.sihyun.pingpong.domain.enums.Team;
-import com.sihyun.pingpong.dto.room.TeamChangeRequestDto;
+import com.sihyun.pingpong.dto.team.TeamChangeRequestDto;
 import com.sihyun.pingpong.repository.RoomRepository;
 import com.sihyun.pingpong.repository.UserRepository;
 import com.sihyun.pingpong.repository.UserRoomRepository;
