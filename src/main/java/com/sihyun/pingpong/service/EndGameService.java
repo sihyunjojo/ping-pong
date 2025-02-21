@@ -29,13 +29,11 @@ public class EndGameService {
 
         try {
             userRoomRepository.deleteByRoom(room);
-            log.info("메서드 유저룸 삭제 완료");
         } catch (Exception e) {
             log.error("❌ userRoom 삭제 중 예외 발생: {}", e.getMessage(), e);
         }
 
         room.setStatus(RoomStatus.FINISH);
         roomRepository.save(room);
-        log.info("끝");
     }
 }
