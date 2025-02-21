@@ -5,6 +5,8 @@ import com.sihyun.pingpong.domain.User;
 import com.sihyun.pingpong.domain.UserRoom;
 import com.sihyun.pingpong.domain.enums.RoomStatus;
 import com.sihyun.pingpong.domain.enums.RoomType;
+import com.sihyun.pingpong.domain.enums.Team;
+import com.sihyun.pingpong.domain.enums.UserStatus;
 import com.sihyun.pingpong.dto.room.RoomCreateRequestDto;
 import com.sihyun.pingpong.dto.room.RoomDetailResponseDto;
 import com.sihyun.pingpong.dto.room.RoomJoinRequestDto;
@@ -44,7 +46,7 @@ public class RoomService {
                 .orElseThrow(() -> new RoomServiceException("유저를 찾을 수 없습니다."));
 
         // 2. 유저 상태 확인 (ACTIVE 상태인지)
-        if (user.getStatus() != User.UserStatus.ACTIVE) {
+        if (user.getStatus() != UserStatus.ACTIVE) {
             throw new RoomServiceException("방을 생성할 수 없는 유저 상태입니다.");
         }
 
@@ -117,7 +119,7 @@ public class RoomService {
         }
 
         // 유저 상태 확인
-        if (user.getStatus() != User.UserStatus.ACTIVE) {
+        if (user.getStatus() != UserStatus.ACTIVE) {
             throw new RoomServiceException("활성 상태인 유저만 참가할 수 있습니다.");
         }
 
@@ -134,7 +136,7 @@ public class RoomService {
         }
 
         // 팀 배정 로직
-        UserRoom.Team team = assignTeam(room);
+        Team team = assignTeam(room);
 
         // 유저를 방에 추가
         userRoomRepository.save(
@@ -146,14 +148,14 @@ public class RoomService {
         );
     }
 
-    private UserRoom.Team assignTeam(Room room) {
-        long redCount = userRoomRepository.countByRoomAndTeam(room, UserRoom.Team.RED);
-        long blueCount = userRoomRepository.countByRoomAndTeam(room, UserRoom.Team.BLUE);
+    private Team assignTeam(Room room) {
+        long redCount = userRoomRepository.countByRoomAndTeam(room, Team.RED);
+        long blueCount = userRoomRepository.countByRoomAndTeam(room, Team.BLUE);
 
         if (redCount > blueCount) {
-            return UserRoom.Team.BLUE;
+            return Team.BLUE;
         } else {
-            return UserRoom.Team.RED;
+            return Team.RED;
         }
     }
 

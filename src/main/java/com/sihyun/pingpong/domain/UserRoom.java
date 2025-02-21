@@ -1,6 +1,8 @@
 package com.sihyun.pingpong.domain;
 
 
+import com.sihyun.pingpong.domain.enums.Team;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,7 +43,5 @@ public class UserRoom {
     @Column(nullable = false)
     private Team team; // RED, BLUE 팀 구분
 
-    public enum Team {
-        RED, BLUE
-    }
+
 }

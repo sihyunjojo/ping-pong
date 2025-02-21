@@ -7,6 +7,7 @@ import com.sihyun.pingpong.domain.Room;
 import com.sihyun.pingpong.domain.User;
 import com.sihyun.pingpong.domain.UserRoom;
 import com.sihyun.pingpong.domain.enums.RoomStatus;
+import com.sihyun.pingpong.domain.enums.Team;
 import com.sihyun.pingpong.dto.room.TeamChangeRequestDto;
 import com.sihyun.pingpong.exception.RoomServiceException;
 import com.sihyun.pingpong.repository.RoomRepository;
@@ -43,8 +44,8 @@ public class TeamService {
         }
 
         // 4. 현재 팀과 반대 팀 구하기
-        UserRoom.Team currentTeam = userRoom.getTeam();
-        UserRoom.Team oppositeTeam = (currentTeam == UserRoom.Team.RED) ? UserRoom.Team.BLUE : UserRoom.Team.RED;
+        Team currentTeam = userRoom.getTeam();
+        Team oppositeTeam = (currentTeam == Team.RED) ? Team.BLUE : Team.RED;
 
         // 5. 반대 팀에 인원이 정원의 절반을 초과하면 변경 불가능
         long teamSize = userRoomRepository.countByRoomAndTeam(room, oppositeTeam);

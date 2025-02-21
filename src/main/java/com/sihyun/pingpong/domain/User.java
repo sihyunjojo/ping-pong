@@ -1,5 +1,7 @@
 package com.sihyun.pingpong.domain;
 
+import com.sihyun.pingpong.domain.enums.UserStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -35,11 +37,5 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status; // WAIT(대기), ACTIVE(활성), NON_ACTIVE(비활성)
-
-    public enum UserStatus {
-        ACTIVE,      // 활성 (fakerId ≤ 30)
-        WAIT,        // 대기 (31 ≤ fakerId ≤ 60)
-        NON_ACTIVE   // 비활성 (fakerId ≥ 61)
-    }
 
 }

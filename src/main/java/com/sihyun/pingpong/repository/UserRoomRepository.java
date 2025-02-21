@@ -3,6 +3,7 @@ package com.sihyun.pingpong.repository;
 import com.sihyun.pingpong.domain.Room;
 import com.sihyun.pingpong.domain.User;
 import com.sihyun.pingpong.domain.UserRoom;
+import com.sihyun.pingpong.domain.enums.Team;
 
 import java.util.Optional;
 
@@ -12,7 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
         boolean existsByUser(User user);
-        long countByRoomAndTeam(Room room, UserRoom.Team team);
+        long countByRoomAndTeam(Room room, Team team);
         long countByRoom(Room room);
         Optional<UserRoom> findByUserAndRoom(User user, Room room);
         void deleteByRoom(Room room);
