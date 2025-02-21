@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({RoomServiceException.class, GameServiceException.class})
     public ResponseEntity<ApiResponse<Void>> handleServiceException(RuntimeException ex) {
         log.error("[SERVICE ERROR] {}", ex.getMessage());
-        return ResponseEntity.status(201).body(ApiResponse.res(201, "불가능한 요청입니다."));
+        return ResponseEntity.status(200).body(ApiResponse.res(201, "불가능한 요청입니다."));
     }
 
 
