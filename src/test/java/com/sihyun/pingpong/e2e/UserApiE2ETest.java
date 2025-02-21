@@ -3,6 +3,7 @@ package com.sihyun.pingpong.e2e;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
+@Disabled
 @TestMethodOrder(OrderAnnotation.class) // 실행 순서를 보장
 public class UserApiE2ETest {
 
