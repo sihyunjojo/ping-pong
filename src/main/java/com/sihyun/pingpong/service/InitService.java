@@ -68,7 +68,7 @@ public class InitService {
         userRepository.saveAll(users);
     }
 
-    private UserStatus determineStatus(int fakerId) {
+    UserStatus determineStatus(int fakerId) {
         if (fakerId <= 30) return UserStatus.ACTIVE;
         if (fakerId <= 60) return UserStatus.WAIT;
         return UserStatus.NON_ACTIVE;
